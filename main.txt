@@ -1,0 +1,357 @@
+#make_bin#
+#start=led_display.exe#
+
+
+
+; BIN is plain binary format similar to .com format, but not limited to 1 segment;
+; All values between # are directives, these values are saved into a separate .binf file.
+; Before loading .bin file emulator reads .binf file with the same file name.
+
+; All directives are optional, if you don't need them, delete them.
+
+; set loading address, .bin file will be loaded to this address:
+#LOAD_SEGMENT=0500h#
+#LOAD_OFFSET=0000h#
+
+; set entry point:
+#CS=0500h#	; same as loading segment
+#IP=0000h#	; same as loading offset
+
+; set segment registers
+
+#DS=0500h#	; same as loading segment
+#ES=0500h#	; same as loading segment
+
+; set stack
+#SS=0500h#	; same as loading segment
+#SP=FFFEh#	; set to top of loading segment
+
+; set general registers (optional)
+#AX=0000h#
+#BX=0000h#
+#CX=0000h#
+#DX=0000h#
+#SI=0000h#
+#DI=0000h#
+#BP=0000h#
+
+
+
+
+                       
+a=300h
+c=302h
+M=304h
+temp=305h 
+result=308h
+  
+
+
+      
+
+
+;random gnerator function for numbers between 0 and 100 -->x(i+1)=(a*x(i)+c) %M a=401,c=227,M=255, then multiplied by factor 3
+start:
+mov ax,1   
+
+
+random:
+mov ax,[temp]
+
+mov bx,[a]
+
+mul bx 
+
+
+add ax,[C]
+
+
+mov bx,[M]
+mov bh,0
+div bx
+
+mov [temp],dl
+
+mov  al,3
+mul dl
+mov [result],ax
+
+
+; set video mode:
+; text mode. 80x25. 16 colors. 8 pages.
+mov     ax, 3
+int     10h
+
+
+
+
+mov bx,[result]
+
+
+cmp bx,200
+jnae green ;less than not equal 200
+jnb  check  ;equal or above 200
+
+green:
+
+mov     dl, 0   ; current column. 
+
+mov dh,0  ; current row 
+
+mov ah, 2
+int 10h
+
+mov     al, 'G'
+mov     bh, 0000h
+mov     bl,0002h
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+inc dl 
+
+mov ah, 2
+int 10h
+
+mov     al, 'R'
+mov     bh, 0000h
+mov     bl,0002h
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+inc dl 
+
+
+mov ah, 2
+int 10h
+
+mov     al, 'E'
+mov     bh, 0000h
+mov     bl,0002h
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+inc dl 
+
+mov ah, 2
+int 10h
+
+mov     al, 'E'
+mov     bh, 0000h
+mov     bl,0002h
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+inc dl 
+
+mov ah, 2
+int 10h
+
+mov     al, 'N'
+mov     bh, 0000h
+mov     bl,0002h
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+
+
+
+
+mov ax,[result]
+out 199, ax
+
+mov     cx, 004ch
+mov     dx, 4b40h
+mov     ah, 86h
+int     15h
+
+mov     cx, 11
+jmp timer
+
+check:
+
+cmp bx,500
+jnae yellow   ;less than not equal 500
+jnb red      ;above or equal 500
+
+yellow:
+mov     dl, 0   ; current column. 
+
+mov dh,0; 
+
+mov ah, 2
+int 10h
+
+mov     al, 'Y'
+mov     bh, 0000h
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+inc dl 
+
+mov ah, 2
+int 10h
+
+mov     al, 'E'
+mov     bh, 0000h
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+  
+inc dl 
+
+mov ah, 2
+int 10h 
+
+mov     al, 'L'
+mov     bh, 0000h 
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h
+
+mov ah, 2
+int 10h
+
+mov     al, 'L'
+mov     bh, 0000h
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+  
+inc dl 
+       
+       
+mov ah, 2
+int 10h
+
+mov     al, 'L'
+mov     bh, 0000h
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+  
+inc dl
+
+mov ah, 2
+int 10h
+
+mov     al, 'O'
+mov     bh, 0000h
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+  
+inc dl 
+
+mov ah, 2
+int 10h
+
+mov     al, 'W'
+mov     bh, 0000h
+mov     bl,000Eh
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+  
+  
+ 
+
+
+
+
+mov ax,[result]
+out 199, ax
+
+mov     cx, 004ch
+mov     dx, 4b40h
+mov     ah, 86h
+int     15h
+
+mov     cx, 11
+jmp timer
+
+red: 
+
+mov     dl, 0   ; current column. 
+
+mov dh,0; 
+
+ 
+mov ah, 2
+int 10h
+
+mov     al, 'R'
+mov     bh, 0000h
+mov     bl,000ch
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+inc dl 
+mov ah, 2
+int 10h
+
+mov     al, 'E'
+mov     bh, 0000h
+mov     bl,000ch
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+  
+inc dl
+mov ah, 2
+int 10h 
+
+mov     al, 'D'
+mov     bh, 0000h
+mov     bl,000ch
+mov     cx, 1
+mov     ah, 09h
+int     10h 
+
+
+
+
+
+mov ax,[result]
+out 199, ax 
+
+mov     cx, 004ch
+mov     dx, 4b40h
+mov     ah, 86h
+int     15h
+
+
+mov     cx, 11
+timer:
+ cmp     cx,0 
+je      random
+dec cx
+mov bx,cx
+
+mov ax,cx
+out 199,ax
+
+mov     cx, 0fh
+mov     dx, 4240h
+mov     ah, 86h
+int     15h
+mov cx,bx
+jmp timer  
+          
+
+
+                             
+                              
+HLT           ; halt!
